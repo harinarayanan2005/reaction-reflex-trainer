@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ReflexForge Ultra | Esports Human Benchmark & Cognitive Arena</title>
+  <meta name="description" content="The ultimate reaction benchmark and cognitive training arena: Visual Reflex, Grid Shot, Aim Blitz, Audio Speed, Typing Rush, Stroop Clash, and Rhythm Precision.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700;800&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-theme="dark">
+  <!-- Interactive Particle Background Canvas -->
+  <canvas id="ambientCanvas" class="ambient-canvas"></canvas>
+
+  <div class="app-container">
+    <!-- Top Header & Esports HUD Bar -->
+    <header class="header">
+      <div class="logo">
+        <div class="logo-badge">
+          <span class="logo-icon">⚡</span>
+        </div>
+        <div>
+          <h1>Reflex<span>Forge</span> <span class="badge-pro">ULTRA</span></h1>
+          <p class="subtitle">Esports Cognitive Benchmark & Aim Training Suite</p>
+        </div>
+      </div>
+
+      <!-- Quick Controls -->
+      <div class="header-controls">
+        <div class="sound-pack-selector">
+          <label for="soundPackSelect" class="sr-only">Sound Pack</label>
+          <select id="soundPackSelect" class="hud-select" title="Sound Theme">
+            <option value="cyber">🔊 Cyber Synths</option>
+            <option value="arcade">👾 8-Bit Arcade</option>
+            <option value="scifi">🛸 Sci-Fi Beams</option>
+            <option value="minimal">🎵 Clean Chimes</option>
+          </select>
+        </div>
+
+        <button id="soundToggleBtn" class="icon-btn" aria-label="Toggle Sound" title="Toggle Sound">
+          <span id="soundIcon">🔊</span>
+        </button>
+        <button id="themeToggleBtn" class="icon-btn" aria-label="Toggle Theme" title="Toggle Theme">
+          <span id="themeIcon">🌙</span>
+        </button>
+        <button id="gamerCardBtn" class="btn btn-outline" title="Generate Gamer Card">
+          <span class="btn-icon">🪪</span> Gamer Card
+        </button>
+      </div>
+    </header>
+
+    <!-- Global Gamer Quick Bar -->
+    <div class="gamer-quickbar">
+      <div class="quickbar-stat">
+        <span class="qb-label">TIER RANK</span>
+        <span class="qb-val highlight-gold" id="hudGlobalRank">MASTER ⚡</span>
+      </div>
+      <div class="quickbar-divider"></div>
+      <div class="quickbar-stat">
+        <span class="qb-label">VISUAL PB</span>
+        <span class="qb-val" id="hudVisualPb">-- ms</span>
+      </div>
+      <div class="quickbar-divider"></div>
+      <div class="quickbar-stat">
+        <span class="qb-label">AIM HIGH SCORE</span>
+        <span class="qb-val" id="hudAimPb">-- pts</span>
+      </div>
+      <div class="quickbar-divider"></div>
+      <div class="quickbar-stat">
+        <span class="qb-label">GRID SPEED</span>
+        <span class="qb-val" id="hudGridPb">-- hits/s</span>
+      </div>
+      <div class="quickbar-divider"></div>
+      <div class="quickbar-stat">
+        <span class="qb-label">ROUNDS COMPLETED</span>
+        <span class="qb-val" id="hudTotalTests">0</span>
+      </div>
+    </div>
+
+    <!-- Mode Navigation - 7 Elite Cognitive Tests -->
+    <nav class="mode-nav" aria-label="Training Modes">
+      <button class="mode-tab active" data-mode="visual">
+        <span class="tab-icon">⚡</span>
+        <span class="tab-text">Visual Reflex</span>
+      </button>
+      <button class="mode-tab" data-mode="grid">
+        <span class="tab-icon">🎯</span>
+        <span class="tab-text">Grid Shot</span>
+      </button>
+      <button class="mode-tab" data-mode="aim">
+        <span class="tab-icon">🔴</span>
+        <span class="tab-text">Target Blitz</span>
+      </button>
+      <button class="mode-tab" data-mode="audio">
+        <span class="tab-icon">🎧</span>
+        <span class="tab-text">Audio Reaction</span>
+      </button>
+      <button class="mode-tab" data-mode="typing">
+        <span class="tab-icon">⌨️</span>
+        <span class="tab-text">Typing APM</span>
+      </button>
+      <button class="mode-tab" data-mode="stroop">
+        <span class="tab-icon">🧠</span>
+        <span class="tab-text">Stroop Clash</span>
+      </button>
+      <button class="mode-tab" data-mode="tempo">
+        <span class="tab-icon">⏱️</span>
+        <span class="tab-text">Tempo Precision</span>
+      </button>
+      <button class="mode-tab" data-mode="memory">
+        <span class="tab-icon">🔢</span>
+        <span class="tab-text">Chimp Memory</span>
+      </button>
+    </nav>
+
+    <!-- Main Game Arenas Container -->
+    <main class="game-stage">
+      
+      <!-- 1. Visual Reflex Arena -->
+      <section id="visualMode" class="mode-arena active">
+        <div id="visualTriggerBox" class="reaction-card state-waiting" tabindex="0">
+          <div class="card-content">
+            <div class="stage-icon" id="visualIcon">⏱️</div>
+            <h2 id="visualTitle">Click anywhere or press [SPACE] to start</h2>
+            <p id="visualDesc">Wait for the screen to turn GREEN, then click as fast as possible!</p>
+            <div id="visualResultBadge" class="result-badge hidden"></div>
+          </div>
+        </div>
+
+        <div class="stats-panel">
+          <div class="stat-card">
+            <span class="stat-label">Last Score</span>
+            <span class="stat-val" id="visualLastScore">-- ms</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Best (All-time)</span>
+            <span class="stat-val highlight-cyan" id="visualBestScore">-- ms</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Average (Last 5)</span>
+            <span class="stat-val" id="visualAvgScore">-- ms</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Rank</span>
+            <span class="stat-val rank-badge" id="visualRank">Unranked</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. Grid Shot (FPS Warmup Arena) -->
+      <section id="gridMode" class="mode-arena">
+        <div class="arena-toolbar">
+          <div class="toolbar-stat">
+            <span class="toolbar-label">Time Remaining:</span>
+            <span class="toolbar-val" id="gridTimer">30s</span>
+          </div>
+          <div class="toolbar-stat">
+            <span class="toolbar-label">Targets Hit:</span>
+            <span class="toolbar-val highlight-cyan" id="gridHits">0</span>
+          </div>
+          <div class="toolbar-stat">
+            <span class="toolbar-label">Pace:</span>
+            <span class="toolbar-val" id="gridPace">0.00 /s</span>
+          </div>
+          <div class="toolbar-stat">
+            <span class="toolbar-label">Accuracy:</span>
+            <span class="toolbar-val" id="gridAccuracy">100%</span>
+          </div>
+          <button id="gridStartBtn" class="btn btn-primary">Start Grid Shot</button>
+        </div>
+
+        <div id="gridField" class="grid-field">
+          <!-- 4x4 Grid Matrix with 3 active glowing targets -->
+          <div class="grid-overlay" id="gridOverlay">
+            <div class="overlay-modal">
+              <span class="overlay-icon">🎯</span>
+              <h2>FPS Grid Shot Arena</h2>
+              <p>Three targets are active at all times. Hit targets as fast as possible. When one dies, another respawns instantly.</p>
+              <button id="gridModalStartBtn" class="btn btn-primary btn-large">Deploy 30s Run</button>
+            </div>
+          </div>
+          <div class="grid-cells-container" id="gridCellsContainer"></div>
+        </div>
+
+        <div class="stats-panel">
+          <div class="stat-card">
+            <span class="stat-label">Best Grid Score</span>
+            <span class="stat-val highlight-cyan" id="gridBestScore">-- hits</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Highest Pace</span>
+            <span class="stat-val" id="gridBestPace">-- hits/s</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Avg Flick Speed</span>
+            <span class="stat-val" id="gridAvgFlick">-- ms</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Target Blitz (Precision Shrinking Targets) -->
+      <section id="aimMode" class="mode-arena">
+        <div class="arena-toolbar">
+          <div class="toolbar-stat">
+            <span class="toolbar-label">Time:</span>
+            <span class="toolbar-val" id="aimTimer">30s</span>
+          </div>
+          <div class="toolbar-stat">
+            <span class="toolbar-label">Score:</span>
+            <span class="toolbar-val highlight-cyan" id="aimScore">0</span>
+          </div>
+          <div class="toolbar-stat">
+            <span class="toolbar-label">Accuracy:</span>
+            <span class="toolbar-val" id="aimAccuracy">100%</span>
+          </div>
+          <button id="aimStartBtn" class="btn btn-primary">Start Target Blitz</button>
+        </div>
+
+        <div id="aimField" class="aim-field">
+          <div class="aim-overlay" id="aimOverlay">
+            <div class="overlay-modal">
+              <span class="overlay-icon">🔴</span>
+              <h2>Precision Target Blitz</h2>
+              <p>Click random shrinking targets. +100 for hits, -25 for misses. Test your micro-flicks!</p>
+              <button id="aimModalStartBtn" class="btn btn-primary btn-large">Start Challenge</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats-panel">
+          <div class="stat-card">
+            <span class="stat-label">Targets Destroyed</span>
+            <span class="stat-val" id="aimStatHits">0</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Avg Reaction Speed</span>
+            <span class="stat-val highlight-cyan" id="aimStatAvgSpeed">-- ms</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">High Score</span>
+            <span class="stat-val" id="aimStatBest">-- pts</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Audio Reflex Arena -->
+      <section id="audioMode" class="mode-arena">
+        <div id="audioTriggerBox" class="reaction-card state-audio-wait" tabindex="0">
+          <div class="card-content">
+            <div class="stage-icon" id="audioIcon">🎧</div>
+            <h2 id="audioTitle">Click to start audio reaction</h2>
+            <p id="audioDesc">Focus with headphones. Click immediately when you HEAR the tone!</p>
+            <div id="audioResultBadge" class="result-badge hidden"></div>
+          </div>
+        </div>
+
+        <div class="did-you-know">
+          💡 <strong>Science Fact:</strong> Auditory stimuli trigger neural responses in <strong>~140–160ms</strong>, roughly <strong>30–50ms faster</strong> than visual cues, because sound waves mechanically vibrate the cochlea directly into the auditory nerve!
+        </div>
+
+        <div class="stats-panel">
+          <div class="stat-card">
+            <span class="stat-label">Last Audio Score</span>
+            <span class="stat-val" id="audioLastScore">-- ms</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Best Audio</span>
+            <span class="stat-val highlight-cyan" id="audioBestScore">-- ms</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Comparison vs Vision</span>
+            <span class="stat-val" id="audioComparison">--</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. Typing APM & Velocity Rush -->
+      <section id="typingMode" class="mode-arena">
+        <div class="arena-toolbar">
+          <div class="toolbar-stat">
+            <span class="toolbar-label">Time:</span>
+            <span class="toolbar-val" id="typingTimer">30s</span>
+          </div>
+          <div class="toolbar-stat">
+            <span class="toolbar-label">Words Destroyed:</span>
+            <span class="toolbar-val highlight-cyan" id="typingWordsHit">0</span>
+          </div>
+          <div class="toolbar-stat">
+            <span class="toolbar-label">Live WPM:</span>
+            <span class="toolbar-val" id="typingWpm">0 WPM</span>
+          </div>
+          <div class="toolbar-stat">
+            <span class="toolbar-label">Streak:</span>
+            <span class="toolbar-val highlight-gold" id="typingStreak">0x</span>
+          </div>
+          <button id="typingStartBtn" class="btn btn-primary">Start Typing Rush</button>
+        </div>
+
+        <div class="typing-arena" id="typingArena">
+          <div class="typing-overlay" id="typingOverlay">
+            <div class="overlay-modal">
+              <span class="overlay-icon">⌨️</span>
+              <h2>Cyber Typing APM Rush</h2>
+              <p>Hacker command words descend from the top. Type them to <strong>instantly blast and vaporize</strong> them — no need to press Enter!</p>
+              <button id="typingModalStartBtn" class="btn btn-primary btn-large">Initialize Terminal</button>
+            </div>
+          </div>
+          <div class="falling-words-field" id="fallingWordsField"></div>
+          <div class="typing-firewall-line"></div>
+          <div class="typing-input-bar">
+            <input type="text" id="typingInput" placeholder="Type falling words to auto-blast..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" disabled>
+          </div>
+        </div>
+
+        <div class="stats-panel">
+          <div class="stat-card">
+            <span class="stat-label">Peak WPM</span>
+            <span class="stat-val highlight-cyan" id="typingBestWpm">0 WPM</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Highest Streak</span>
+            <span class="stat-val" id="typingBestStreak">0x</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Typing Accuracy</span>
+            <span class="stat-val" id="typingAccuracy">100%</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. Stroop Color Clash (Cognitive Control) -->
+      <section id="stroopMode" class="mode-arena">
+        <div class="arena-toolbar">
+          <div class="toolbar-stat">
+            <span class="toolbar-label">Time:</span>
+            <span class="toolbar-val" id="stroopTimer">30s</span>
+          </div>
+          <div class="toolbar-stat">
+            <span class="toolbar-label">Matches:</span>
+            <span class="toolbar-val highlight-cyan" id="stroopScore">0</span>
+          </div>
+          <div class="toolbar-stat">
+            <span class="toolbar-label">Accuracy:</span>
+            <span class="toolbar-val" id="stroopAccuracy">100%</span>
+          </div>
+          <button id="stroopStartBtn" class="btn btn-primary">Start Stroop Test</button>
+        </div>
+
+        <div class="stroop-arena" id="stroopArena">
+          <div class="stroop-overlay" id="stroopOverlay">
+            <div class="overlay-modal">
+              <span class="overlay-icon">🧠</span>
+              <h2>Cognitive Stroop Clash</h2>
+              <p>Does the <strong>meaning of the word</strong> match the <strong>visual ink color</strong>? Fight your brain's automatic reflexes!</p>
+              <button id="stroopModalStartBtn" class="btn btn-primary btn-large">Begin Test</button>
+            </div>
+          </div>
+          
+          <div class="stroop-prompt-container">
+            <div class="stroop-word" id="stroopWordDisplay">READY</div>
+            <p class="stroop-hint">Does the word match its display color?</p>
+          </div>
+
+          <div class="stroop-actions">
+            <button id="stroopMatchBtn" class="btn-stroop btn-match">
+              <span class="btn-stroop-icon">✅</span>
+              <span>MATCH (Left Arrow / A)</span>
+            </button>
+            <button id="stroopNoMatchBtn" class="btn-stroop btn-no-match">
+              <span class="btn-stroop-icon">❌</span>
+              <span>MISMATCH (Right Arrow / D)</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="stats-panel">
+          <div class="stat-card">
+            <span class="stat-label">Correct Answers</span>
+            <span class="stat-val" id="stroopCorrectCount">0</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Avg Decision Speed</span>
+            <span class="stat-val highlight-cyan" id="stroopAvgSpeed">-- ms</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">High Score</span>
+            <span class="stat-val" id="stroopBestScore">-- pts</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. Tempo Precision (Rhythm Offset) -->
+      <section id="tempoMode" class="mode-arena">
+        <div class="tempo-arena">
+          <div class="tempo-visualizer">
+            <div class="tempo-outer-ring" id="tempoOuterRing"></div>
+            <div class="tempo-target-circle">
+              <span class="tempo-center-icon">🎯</span>
+            </div>
+          </div>
+          <h2 id="tempoFeedbackText">Tap [SPACE] or Click exactly on beat!</h2>
+          <p id="tempoSubText">Target BPM: 120 BPM • 1 Beat every 500ms</p>
+          <button id="tempoActionBtn" class="btn btn-primary btn-large">Start Metronome</button>
+          <div id="tempoOffsetBadge" class="tempo-offset-badge hidden">+0 ms</div>
+        </div>
+
+        <div class="stats-panel">
+          <div class="stat-card">
+            <span class="stat-label">Last Timing Offset</span>
+            <span class="stat-val" id="tempoLastOffset">-- ms</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Avg Absolute Error</span>
+            <span class="stat-val highlight-cyan" id="tempoAvgError">-- ms</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Perfect Hits (&lt; 20ms)</span>
+            <span class="stat-val" id="tempoPerfectHits">0</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8. Chimp Memory Sequence -->
+      <section id="memoryMode" class="mode-arena">
+        <div class="arena-toolbar">
+          <div class="toolbar-stat">
+            <span class="toolbar-label">Level:</span>
+            <span class="toolbar-val highlight-cyan" id="memoryLevel">1</span>
+          </div>
+          <div class="toolbar-stat">
+            <span class="toolbar-label">Instruction:</span>
+            <span class="toolbar-val" id="memoryInstruction">Click tiles in ascending order: 1, 2, 3...</span>
+          </div>
+          <button id="memoryStartBtn" class="btn btn-primary">Start Round</button>
+        </div>
+
+        <div id="memoryGrid" class="memory-grid"></div>
+
+        <div class="stats-panel">
+          <div class="stat-card">
+            <span class="stat-label">Highest Level Cleared</span>
+            <span class="stat-val highlight-cyan" id="memoryBestLevel">1</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Tiles Remembered</span>
+            <span class="stat-val" id="memoryTilesCount">4</span>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Real-time Performance Analytics Canvas Graph -->
+    <section class="analytics-section">
+      <div class="analytics-header">
+        <div>
+          <h3>📈 Live Reaction & Cognitive Curve</h3>
+          <p class="analytics-sub">Millisecond reaction history across your training sessions</p>
+        </div>
+        <button id="clearHistoryBtn" class="btn btn-ghost btn-sm">Reset History</button>
+      </div>
+      <div class="graph-card">
+        <canvas id="performanceGraph" height="180"></canvas>
+      </div>
+    </section>
+
+    <!-- Benchmark Tiers Reference -->
+    <section class="benchmark-info">
+      <h3>⚡ Human Reaction Tiers (Visual Reference)</h3>
+      <div class="tiers-grid">
+        <div class="tier-card tier-godlike">
+          <span class="tier-badge">Godlike (Top 1%)</span>
+          <span class="tier-time">&lt; 180 ms</span>
+          <span class="tier-desc">Esports Elite & Fighter Pilots</span>
+        </div>
+        <div class="tier-card tier-fast">
+          <span class="tier-badge">Esports Pro</span>
+          <span class="tier-time">180 – 215 ms</span>
+          <span class="tier-desc">High-level competitive gamers</span>
+        </div>
+        <div class="tier-card tier-avg">
+          <span class="tier-badge">Healthy Human</span>
+          <span class="tier-time">216 – 265 ms</span>
+          <span class="tier-desc">Standard human reflex speeds</span>
+        </div>
+        <div class="tier-card tier-slow">
+          <span class="tier-badge">Fatigued / Casual</span>
+          <span class="tier-time">&gt; 265 ms</span>
+          <span class="tier-desc">Needs a break or coffee ☕</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>ReflexForge Ultra • High Precision <code>performance.now()</code> Architecture • Procedural Web Audio API</p>
+    </footer>
+  </div>
+
+  <!-- Gamer Card Modal -->
+  <div class="modal-backdrop hidden" id="gamerCardModal">
+    <div class="modal-card">
+      <button class="modal-close" id="modalCloseBtn">&times;</button>
+      <div class="gamer-card-preview" id="gamerCardExportable">
+        <div class="gc-header">
+          <span class="gc-badge">REFLEXFORGE ESPORTS</span>
+          <span class="gc-date" id="gcDate">2026.09.27</span>
+        </div>
+        <div class="gc-body">
+          <div class="gc-avatar">⚡</div>
+          <div class="gc-info">
+            <h2 class="gc-name">PLAYER ONE</h2>
+            <div class="gc-rank-tag" id="gcRankTag">MASTER TIER</div>
+          </div>
+        </div>
+        <div class="gc-stats-grid">
+          <div class="gc-stat-box">
+            <span class="gc-stat-title">VISUAL REFLEX</span>
+            <span class="gc-stat-number" id="gcVisualPb">-- ms</span>
+          </div>
+          <div class="gc-stat-box">
+            <span class="gc-stat-title">AIM BLITZ</span>
+            <span class="gc-stat-number" id="gcAimPb">-- pts</span>
+          </div>
+          <div class="gc-stat-box">
+            <span class="gc-stat-title">GRID SHOT PACE</span>
+            <span class="gc-stat-number" id="gcGridPb">-- /s</span>
+          </div>
+          <div class="gc-stat-box">
+            <span class="gc-stat-title">AUDIO REFLEX</span>
+            <span class="gc-stat-number" id="gcAudioPb">-- ms</span>
+          </div>
+        </div>
+        <div class="gc-footer">
+          <span>VERIFIED PERFORMANCE BENCHMARK</span>
+          <span class="gc-watermark">reflexforge.io</span>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button id="copyStatsBtn" class="btn btn-primary btn-large">📋 Copy Shareable Scorecard</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Application Logic -->
+  <script src="audio.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
